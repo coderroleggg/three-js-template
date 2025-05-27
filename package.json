@@ -1,0 +1,22 @@
+{
+  "name": "three-js-space-game-template",
+  "version": "1.0.0",
+  "description": "Крутой шаблон базового приложения с Three.js - интерактивная космическая сцена",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite"
+  },
+  "keywords": ["three.js", "3d", "webgl", "space", "game", "template"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+} 
