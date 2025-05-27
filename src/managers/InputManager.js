@@ -232,14 +232,14 @@ export class InputManager {
 
     /**
      * Проверка нажатия WASD
-     * @returns {Object} Состояние WASD {w, a, s, d}
+     * @returns {Object} Состояние WASD {forward, backward, left, right}
      */
     getWASDState() {
         return {
-            w: this.isKeyPressed('KeyW'),
-            a: this.isKeyPressed('KeyA'),
-            s: this.isKeyPressed('KeyS'),
-            d: this.isKeyPressed('KeyD')
+            forward: this.isKeyPressed('KeyW'),
+            left: this.isKeyPressed('KeyA'),
+            backward: this.isKeyPressed('KeyS'),
+            right: this.isKeyPressed('KeyD')
         };
     }
 

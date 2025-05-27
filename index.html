@@ -144,20 +144,40 @@
         <div id="header">
             <div id="title">🚀 Three.js Space Game Template</div>
         </div>
-        
-        <div id="controls-info">
-            <div><span class="control-key">Мышь</span> - Поворот камеры</div>
-            <div><span class="control-key">Колесо мыши</span> - Приближение/отдаление</div>
-            <div><span class="control-key">ЛКМ + перетаскивание</span> - Орбитальное вращение</div>
-            <div><span class="control-key">ПКМ + перетаскивание</span> - Панорамирование</div>
-            <div><span class="control-key">WASD</span> - Движение (планируется)</div>
-        </div>
 
         <div id="stats">
             <div>FPS: <span id="fps">0</span></div>
             <div>Объекты: <span id="objects">0</span></div>
             <div>Треугольники: <span id="triangles">0</span></div>
             <div>Время: <span id="time">0</span>s</div>
+        </div>
+
+        <!-- Панель управления -->
+        <div id="controls-panel" class="ui-panel" style="
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            max-width: 250px;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        ">
+            <h4 style="margin: 0 0 10px 0; color: #00ffff; font-size: 14px;">Управление</h4>
+            <div style="margin-bottom: 8px;"><strong>WASD:</strong> Движение камеры</div>
+            <div style="margin-bottom: 8px;"><strong>Space/Ctrl:</strong> Вверх/Вниз</div>
+            <div style="margin-bottom: 8px;"><strong>Shift:</strong> Быстрое движение</div>
+            <div style="margin-bottom: 8px;"><strong>C:</strong> Переключить режим камеры</div>
+            <div style="margin-bottom: 8px;"><strong>V:</strong> Включить/выключить WASD</div>
+            <div style="margin-bottom: 8px;"><strong>1-4:</strong> Пресеты камеры</div>
+            <div style="margin-bottom: 8px;"><strong>Мышь:</strong> Вращение/масштаб</div>
+            <div style="margin-bottom: 0;"><strong>Клик:</strong> Выбор планеты</div>
         </div>
     </div>
 

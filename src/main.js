@@ -117,17 +117,92 @@ class SpaceGameApp {
         this.controls.minDistance = 10;
         this.controls.maxDistance = 1000;
         this.controls.maxPolarAngle = Math.PI;
-        
-        // Инициализация контроллера камеры
-        this.cameraController = new CameraController(this.camera, this.controls);
     }
 
     initManagers() {
         this.uiManager = new UIManager();
         this.inputManager = new InputManager();
         
+        // Инициализация контроллера камеры с InputManager
+        this.cameraController = new CameraController(this.camera, this.controls, this.inputManager);
+        
         // Обработчик изменения размера окна
         window.addEventListener('resize', () => this.onWindowResize());
+        
+        // Добавление горячих клавиш
+        this.setupHotkeys();
+    }
+    
+    /**
+     * Настройка горячих клавиш
+     */
+    setupHotkeys() {
+        this.inputManager.addCallback('keyDown', (keyCode) => {
+            switch (keyCode) {
+                case 'KeyC':
+                    // Переключение режима камеры
+                    const newMode = this.cameraController.controlMode === 'orbit' ? 'free' : 'orbit';
+                    this.cameraController.setControlMode(newMode);
+                    this.showNotification(`Режим камеры: ${newMode === 'orbit' ? 'Орбитальный' : 'Свободный'}`);
+                    break;
+                case 'KeyV':
+                    // Переключение WASD
+                    this.cameraController.setWASDEnabled(!this.cameraController.wasdEnabled);
+                    this.showNotification(`WASD: ${this.cameraController.wasdEnabled ? 'Включено' : 'Выключено'}`);
+                    break;
+                case 'Digit1':
+                    this.cameraController.animateToPreset('overview');
+                    break;
+                case 'Digit2':
+                    this.cameraController.animateToPreset('sun');
+                    break;
+                case 'Digit3':
+                    this.cameraController.animateToPreset('earth');
+                    break;
+                case 'Digit4':
+                    this.cameraController.animateToPreset('saturn');
+                    break;
+            }
+        });
+    }
+    
+    /**
+     * Показать уведомление
+     */
+    showNotification(message) {
+        // Создаем элемент уведомления
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        // Анимация появления
+        setTimeout(() => notification.style.opacity = '1', 10);
+        
+        // Удаление через 3 секунды
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
     }
 
     async createSpaceScene() {

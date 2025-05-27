@@ -4,9 +4,17 @@ import * as THREE from 'three';
  * Контроллер камеры - расширенное управление камерой
  */
 export class CameraController {
-    constructor(camera, orbitControls) {
+    constructor(camera, orbitControls, inputManager = null) {
         this.camera = camera;
         this.orbitControls = orbitControls;
+        this.inputManager = inputManager;
+        
+        // WASD управление
+        this.wasdEnabled = true;
+        this.moveSpeed = 50; // Скорость движения
+        this.fastMoveMultiplier = 3; // Множитель для быстрого движения (Shift)
+        this.velocity = new THREE.Vector3();
+        this.direction = new THREE.Vector3();
         
         // Пресеты камеры
         this.presets = {
@@ -24,6 +32,42 @@ export class CameraController {
         this.followTarget = null;
         this.followOffset = new THREE.Vector3(10, 10, 10);
         this.followSpeed = 0.02;
+        
+        // Режимы управления
+        this.controlMode = 'orbit'; // 'orbit' или 'free'
+    }
+
+    /**
+     * Установить режим управления
+     * @param {string} mode - 'orbit' или 'free'
+     */
+    setControlMode(mode) {
+        this.controlMode = mode;
+        
+        if (mode === 'free') {
+            this.orbitControls.enabled = false;
+        } else {
+            this.orbitControls.enabled = true;
+        }
+        
+        console.log(`Режим камеры: ${mode}`);
+    }
+
+    /**
+     * Переключить WASD управление
+     * @param {boolean} enabled - Включить/выключить
+     */
+    setWASDEnabled(enabled) {
+        this.wasdEnabled = enabled;
+        console.log(`WASD управление: ${enabled ? 'включено' : 'выключено'}`);
+    }
+
+    /**
+     * Установить скорость движения
+     * @param {number} speed - Скорость движения
+     */
+    setMoveSpeed(speed) {
+        this.moveSpeed = speed;
     }
 
     /**
@@ -31,9 +75,73 @@ export class CameraController {
      * @param {number} deltaTime - Время с последнего кадра
      */
     update(deltaTime) {
+        // WASD движение (работает в любом режиме)
+        if (this.wasdEnabled && this.inputManager) {
+            this.updateWASDMovement(deltaTime);
+        }
+        
         // Автоследование за объектом
         if (this.followTarget && !this.isAnimating) {
             this.updateFollowTarget();
+        }
+        
+        // Обновление OrbitControls только в орбитальном режиме
+        if (this.controlMode === 'orbit') {
+            this.orbitControls.update();
+        }
+    }
+
+    /**
+     * Обновление WASD движения
+     * @param {number} deltaTime - Время с последнего кадра
+     */
+    updateWASDMovement(deltaTime) {
+        if (!this.inputManager) return;
+        
+        const wasdState = this.inputManager.getWASDState();
+        const isShiftPressed = this.inputManager.isKeyPressed('ShiftLeft') || this.inputManager.isKeyPressed('ShiftRight');
+        const isSpacePressed = this.inputManager.isKeyPressed('Space');
+        const isCtrlPressed = this.inputManager.isKeyPressed('ControlLeft') || this.inputManager.isKeyPressed('ControlRight');
+        
+        // Получаем направления камеры
+        const forward = new THREE.Vector3(0, 0, -1);
+        const right = new THREE.Vector3(1, 0, 0);
+        const up = new THREE.Vector3(0, 1, 0);
+        
+        // Применяем поворот камеры к направлениям
+        forward.applyQuaternion(this.camera.quaternion);
+        right.applyQuaternion(this.camera.quaternion);
+        
+        // Сброс направления движения
+        this.direction.set(0, 0, 0);
+        
+        // WASD движение
+        if (wasdState.forward) this.direction.add(forward);
+        if (wasdState.backward) this.direction.sub(forward);
+        if (wasdState.left) this.direction.sub(right);
+        if (wasdState.right) this.direction.add(right);
+        
+        // Вертикальное движение
+        if (isSpacePressed) this.direction.add(up);
+        if (isCtrlPressed) this.direction.sub(up);
+        
+        // Нормализация и применение скорости
+        if (this.direction.length() > 0) {
+            this.direction.normalize();
+            
+            let currentSpeed = this.moveSpeed;
+            if (isShiftPressed) {
+                currentSpeed *= this.fastMoveMultiplier;
+            }
+            
+            // Применяем движение
+            const movement = this.direction.clone().multiplyScalar(currentSpeed * deltaTime);
+            this.camera.position.add(movement);
+            
+            // Если используем орбитальные контроллеры, обновляем их цель
+            if (this.controlMode === 'orbit') {
+                this.orbitControls.target.add(movement);
+            }
         }
     }
 

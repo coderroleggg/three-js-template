@@ -443,7 +443,7 @@ export class SpaceScene {
                 emissive: 0xff6600,
                 rotation: { x: 0, y: 0.01, z: 0 },
                 orbit: null,
-                textureType: 'sun'
+                textureUrl: '/textures/sun_texture.png'
             },
             {
                 name: 'Меркурий',
@@ -475,7 +475,7 @@ export class SpaceScene {
                 emissive: 0x000000,
                 rotation: { x: 0, y: 0.01, z: 0 },
                 orbit: { radius: 45, speed: 0.01 },
-                textureType: 'earth'
+                textureUrl: '/textures/earth_texture.png'
             },
             {
                 name: 'Марс',
@@ -485,7 +485,7 @@ export class SpaceScene {
                 emissive: 0x000000,
                 rotation: { x: 0, y: 0.008, z: 0 },
                 orbit: { radius: 60, speed: 0.008 },
-                textureType: 'mars'
+                textureUrl: '/textures/mars_texture.png'
             },
             {
                 name: 'Юпитер',
@@ -495,7 +495,7 @@ export class SpaceScene {
                 emissive: 0x000000,
                 rotation: { x: 0, y: 0.006, z: 0 },
                 orbit: { radius: 85, speed: 0.006 },
-                textureType: 'gas_giant'
+                textureUrl: '/textures/jupiter_texture.png'
             },
             {
                 name: 'Сатурн',
@@ -533,8 +533,11 @@ export class SpaceScene {
         ];
 
         planetConfigs.forEach(config => {
-            // Создаем процедурную текстуру для планеты
-            if (config.textureType) {
+            // Загружаем текстуру из файла или создаем процедурную
+            if (config.textureUrl) {
+                config.texture = this.textureLoader.load(config.textureUrl);
+                config.texture.colorSpace = THREE.SRGBColorSpace;
+            } else if (config.textureType) {
                 config.texture = this.createProceduralTexture(
                     config.textureType, 
                     config.textureColors || [],
