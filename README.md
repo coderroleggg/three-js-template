@@ -1,4 +1,4 @@
-# 🚀 Three.js Space Game Template
+# 🚀🚀  Three.js Space Game Template
 
 A modern and powerful template for creating space games and interactive 3D applications based on Three.js. Features a complete solar system with realistic planets, advanced camera controls, and modular architecture.
 
